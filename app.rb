@@ -98,10 +98,11 @@ get '/options' do
 
   up = wb.exec("SELECT * FROM pb WHERE id = '#{qwerty}'")
 
-  erb :change, locals:{up: up}
+  erb :change, locals:{up: up, qwerty: qwerty}
 end
 
 post '/p_change' do
+  qwerty = params[:qwerty]
   first = params[:first]
   last = params[:last]
   street = params[:street]
@@ -109,6 +110,7 @@ post '/p_change' do
   state = params[:state]
   zip = params[:zip]
   phone = params[:phone]
+  radio = params[:radio]
 
   wbinfo = {
 
@@ -122,9 +124,11 @@ post '/p_change' do
 
   wb = PG::Connection.new(wbinfo)
 
-  if radio == update
-    wb.exec("UPDATE public.pb SET id=nextval('pb_id_seq'::regclass), "first"='first', "last"='last', street='street', city='city', state='state', zip='zip', phone='phone'")
-  elsif radio == delete
-    
-
+  if radio == 'update'
+    wb.exec("UPDATE public.pb SET first='#{first}', last='#{last}', street='#{street}', city='#{city}', state='#{state}', zip='#{zip}', phone='#{phone}' WHERE id = '1'")
+  elsif radio == 'delete'
+    wb.exec("DELETE FROM  public.pb WHERE id = '#{qwerty}'")
+  else radio == 'cancel'
+    redirect '/'
+  end
 end

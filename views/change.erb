@@ -2,6 +2,7 @@
 <form method="post" action="p_change">
 
   <%up.each do |up|%>
+    <input type="hidden" name="qwerty" value="<%=qwerty%>"> 
     <input type="text" name="first" value="<%=up['first']%>">
     <input type="text" name="last" value="<%=up['last']%>">
     <input type="text" name="street" value="<%=up['street']%>">
