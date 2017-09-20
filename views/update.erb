@@ -1,0 +1,20 @@
+<h3> Update </h3>
+<% pb_entry = wb.exec("SELECT * FROM pb WHERE id='1'") %>
+
+<form method="post" action="update">
+	<label>First</label>
+	<input type="text" name="first"><br>
+	<label>Last</label>
+	<input type="text" name="last"><br>
+	<label>Street</label>
+	<input type="text" name="street"><br>
+	<label>City</label>
+	<input type="text" name="city"><br>
+	<label>State</label>
+	<input type="text" name="state"><br>
+	<label>Zip</label>
+	<input type="text" name="zip"><br>
+	<label>Phone</label>
+	<input type="text" name="phone"><br>
+	<input type="submit" value="Submit">
+</form>

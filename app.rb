@@ -3,21 +3,10 @@
 require 'aws-sdk'
 require 'sinatra'
 require 'pg'
+require_relative 'functions.rb'
 load './local_env.rb' if File.exist?('./local_env.rb')
 enable 'sessions'
 
- wbinfo = {
-
-    host: ENV['RDS_HOST'],
-    port: ENV['RDS_PORT'],
-    dbname: ENV['RDS_DB_NAME'],
-    user: ENV['RDS_USERNAME'],
-    password: ENV['RDS_PASSWORD']
-
-  }
-
-
-  wb = PG::Connection.new(wbinfo)
 
 get '/' do
 
@@ -28,52 +17,15 @@ end
 
 post '/records' do
 
-    r = params[:r]
-    
-   
-begin
+    data = params[:data]
 
-  wbinfo = {
+    #createpb
+    #addtopb(data)
 
-    host: ENV['RDS_HOST'],
-    port: ENV['RDS_PORT'],
-    dbname: ENV['RDS_DB_NAME'],
-    user: ENV['RDS_USERNAME'],
-    password: ENV['RDS_PASSWORD']
-
-  }
-
-
-  wb = PG::Connection.new(wbinfo)
-
-  
-
-
-  # wb.exec "create table pb (
-  #            id int primary key,
-  #            first varchar(50),
-  #            last varchar(50),
-  #            street varchar(50),
-  #            city varchar(25),
-  #            state varchar(2),
-  #            zip varchar(5),
-  #            phone varchar(10))"
-
-  wb.exec("INSERT INTO pb(first, last, street, city, state, zip, phone)VALUES('#{r[0]}','#{r[1]}','#{r][2]}','#{r][3]}','#{r][4]}','#{r[5]}','#{r[6]}')")
-
-
-rescue PG::Error => e
-
-    puts e.message
-
-ensure
-
-    wb.close if wb
+ redirect '/get'
 
 end
 
-  redirect '/get'
-end
 
 get '/get' do
 
@@ -90,14 +42,20 @@ begin
   }
 
   wb = PG::Connection.new(wbinfo)
-  rs = wb.exec 'SELECT * FROM public.pb'
-  p "#{rs}"
+  rs = wb.exec('SELECT * FROM public.pb')
+  p "#{rs[0]}"
 
-  list = []
+  #qwerty = rs.values
+  #list = ""
 
-  rs.each do |row|
-     list << [row['First'], row['Last'], row['Street'], row['City'], row['State'], row['Zip'], row['Phone']]
-  end
+  # rs.each do |row|
+  #    list << [row['first'], row['last'], row['Street'], row['City'], row['State'], row['Zip'], row['Phone']]
+  #    #list << row[1]
+  #    #list << row[2]
+  #    #list << "<br>"
+  # end
+
+  #puts "#{list}"
 
   #{}"%s %s %s %s %s %s %s" %
 
@@ -107,12 +65,66 @@ begin
 
   ensure
 
-    rs.clear if rs
     wb.close if wb
+  end
+
+
+
+  erb :showget, locals:{rs: rs}
 
 end
 
+post '/update' do
+  qwerty = params[:qwerty]
 
-  erb :showget, locals:{list: list}
+
+  redirect '/options?qwerty=' + qwerty
+end
+
+get '/options' do
+  qwerty = params[:qwerty]
+
+  wbinfo = {
+
+    host: ENV['RDS_HOST'],
+    port:ENV['RDS_PORT'],
+    dbname:ENV['RDS_DB_NAME'],
+    user:ENV['RDS_USERNAME'],
+    password:ENV['RDS_PASSWORD']
+
+  }
+
+  wb = PG::Connection.new(wbinfo)
+
+  up = wb.exec("SELECT * FROM pb WHERE id = '#{qwerty}'")
+
+  erb :change, locals:{up: up}
+end
+
+post '/p_change' do
+  first = params[:first]
+  last = params[:last]
+  street = params[:street]
+  city = params[:city]
+  state = params[:state]
+  zip = params[:zip]
+  phone = params[:phone]
+
+  wbinfo = {
+
+    host: ENV['RDS_HOST'],
+    port:ENV['RDS_PORT'],
+    dbname:ENV['RDS_DB_NAME'],
+    user:ENV['RDS_USERNAME'],
+    password:ENV['RDS_PASSWORD']
+
+  }
+
+  wb = PG::Connection.new(wbinfo)
+
+  if radio == update
+    wb.exec("UPDATE public.pb SET id=nextval('pb_id_seq'::regclass), "first"='first', "last"='last', street='street', city='city', state='state', zip='zip', phone='phone'")
+  elsif radio == delete
+    
 
 end

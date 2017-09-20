@@ -1,1 +1,18 @@
-<h3> <%=list%> </h3>
+
+<form method="post" action="update">
+<%rs.each do |row|%>
+  <tr>
+  <td><%=row['first']%></td>
+  <td><%=row['last']%></td>
+  <td><%=row['street']%></td>
+  <td><%=row['city']%></td>
+  <td><%=row['state']%></td>
+  <td><%=row['zip']%></td>
+  <td><%=row['phone']%></td>
+  <input type="checkbox" name='qwerty' value="<%=row['id']%>">
+  </tr><br>
+
+
+<%end%>
+<input type="submit">
+</form>

@@ -1,0 +1,20 @@
+
+<form method="post" action="p_change">
+
+  <%up.each do |up|%>
+    <input type="text" name="first" value="<%=up['first']%>">
+    <input type="text" name="last" value="<%=up['last']%>">
+    <input type="text" name="street" value="<%=up['street']%>">
+    <input type="text" name="city" value="<%=up['city']%>">
+    <input type="text" name="state" value="<%=up['state']%>">
+    <input type="text" name="zip" value="<%=up['zip']%>">
+    <input type="text" name="phone" value="<%=up['phone']%>">
+    <input type="radio" name="radio" value="update">Update
+    <input type="radio" name="radio" value="delete">Delete
+    <input type="radio" name="radio" value="cancel">Cancel
+  <%end%>
+    <input type="submit">
+
+
+
+  </form>
