@@ -3,8 +3,21 @@
 require 'aws-sdk'
 require 'sinatra'
 require 'pg'
-load './local_env.rb'
+load './local_env.rb' if File.exist?('./local_env.rb')
 enable 'sessions'
+
+ wbinfo = {
+
+    host: ENV['RDS_HOST'],
+    port: ENV['RDS_PORT'],
+    dbname: ENV['RDS_DB_NAME'],
+    user: ENV['RDS_USERNAME'],
+    password: ENV['RDS_PASSWORD']
+
+  }
+
+
+  wb = PG::Connection.new(wbinfo)
 
 get '/' do
 
@@ -15,8 +28,9 @@ end
 
 post '/records' do
 
-  session[:r] = session[:r]
-
+    r = params[:r]
+    
+   
 begin
 
   wbinfo = {
@@ -29,19 +43,23 @@ begin
 
   }
 
+
   wb = PG::Connection.new(wbinfo)
 
-  wb.exec "create table pb (
-             id int primary key,
-             first varchar(50),
-             last varchar(50),
-             street varchar(50),
-             city varchar(25),
-             state varchar(2),
-             zip varchar(5),
-             phone varchar(10))"
+  
 
-  wb.exec INSERT INTO public.pb (id, "first", "last", "street", "city", "state", "zip", "phone")VALUES('session[:r][0]', 'session[:r][1]', 'session[:r][2]', 'session[:r][3]', 'session[:r][4]', 'session[:r][5]', 'session[:r][6]');
+
+  # wb.exec "create table pb (
+  #            id int primary key,
+  #            first varchar(50),
+  #            last varchar(50),
+  #            street varchar(50),
+  #            city varchar(25),
+  #            state varchar(2),
+  #            zip varchar(5),
+  #            phone varchar(10))"
+
+  wb.exec("INSERT INTO pb(first, last, street, city, state, zip, phone)VALUES('#{r[0]}','#{r[1]}','#{r][2]}','#{r][3]}','#{r][4]}','#{r[5]}','#{r[6]}')")
 
 
 rescue PG::Error => e
@@ -72,7 +90,8 @@ begin
   }
 
   wb = PG::Connection.new(wbinfo)
-  rs = wb.exec 'SELECT * FROM pb LIMIT 7'
+  rs = wb.exec 'SELECT * FROM public.pb'
+  p "#{rs}"
 
   list = []
 
