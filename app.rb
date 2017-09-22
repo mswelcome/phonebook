@@ -9,7 +9,8 @@ enable 'sessions'
 
 
 get '/' do
-
+umsg = params[:umsg] || ""
+dmsg = params[:dmsg] || ""
 erb :root
 
 
@@ -19,8 +20,8 @@ post '/records' do
 
     data = params[:data]
 
-    #createpb
-    #addtopb(data)
+    createpb
+    addtopb(data)
 
  redirect '/get'
 
@@ -43,21 +44,6 @@ begin
 
   wb = PG::Connection.new(wbinfo)
   rs = wb.exec('SELECT * FROM public.pb')
-  p "#{rs[0]}"
-
-  #qwerty = rs.values
-  #list = ""
-
-  # rs.each do |row|
-  #    list << [row['first'], row['last'], row['Street'], row['City'], row['State'], row['Zip'], row['Phone']]
-  #    #list << row[1]
-  #    #list << row[2]
-  #    #list << "<br>"
-  # end
-
-  #puts "#{list}"
-
-  #{}"%s %s %s %s %s %s %s" %
 
   rescue PG::Error => e
 
@@ -66,6 +52,7 @@ begin
   ensure
 
     wb.close if wb
+
   end
 
 
@@ -111,6 +98,8 @@ post '/p_change' do
   zip = params[:zip]
   phone = params[:phone]
   radio = params[:radio]
+  umsg = "Succesful update"
+  dmsg = "Succesful deletion"
 
   wbinfo = {
 
@@ -126,8 +115,10 @@ post '/p_change' do
 
   if radio == 'update'
     wb.exec("UPDATE public.pb SET first='#{first}', last='#{last}', street='#{street}', city='#{city}', state='#{state}', zip='#{zip}', phone='#{phone}' WHERE id = '1'")
+    redirect '/?umsg=' + umsg
   elsif radio == 'delete'
     wb.exec("DELETE FROM  public.pb WHERE id = '#{qwerty}'")
+    redirect '/?dmsg=' + dmsg
   else radio == 'cancel'
     redirect '/'
   end
