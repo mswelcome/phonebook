@@ -79,7 +79,7 @@ def createlogintable()
 
     wb = PG::Connection.new(wbinfo)
 
-     wb.exec ("CREATE TABLE public.login(
+     wb.exec ("CREATE TABLE public.login (
                 id serial NOT NULL,
                 user varchar(50),
                 pass varchar(50))");

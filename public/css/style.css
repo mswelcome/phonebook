@@ -1,0 +1,43 @@
+.center {
+
+		text-align: center;
+}
+
+.border {
+
+	border: solid;
+	border-radius: 25px;
+
+}
+
+.image {
+
+	background-image: url(/images/aizen_sama_by_vinhfx.jpg);
+	background-size: cover;
+	background-repeat: no-repeat;
+	width: 100%;
+	height: auto;
+
+}
+
+.right {
+	text-align: right;
+}
+
+.bb {
+	border-bottom-style: double;
+}
+
+.bf {
+	font-size: 100%;
+
+}
+
+.font {
+	font-size: 2.0em;
+}
+
+.footer_position {
+	bottom: 10%;
+
+}

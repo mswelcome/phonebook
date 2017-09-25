@@ -3,16 +3,24 @@
 require 'aws-sdk'
 require 'sinatra'
 require 'pg'
+#require 'bcrypt'
 require_relative 'functions.rb'
 load './local_env.rb' if File.exist?('./local_env.rb')
 enable 'sessions'
 
 get '/' do
-  createlogintable()
+
+  #lmsg = params[:lmsg] || ""
+  #createlogintable()
   erb :login
 end
 
 post '/p_login' do
+
+  lmsg = "Login Unsucessful"
+  un = params[:un]
+  pw = params[:pw]
+
 
   wbinfo = {
 
@@ -27,9 +35,16 @@ post '/p_login' do
 
   wb = PG::Connection.new(wbinfo)
 
-  compareuser = wb.exec()
+  compareuser = wb.exec("SELECT * FROM login WHERE user ='#{un}'")
 
+  blah = compareuser.values.flatten
+  puts "#{blah}"
 
+  if blah.include?(pw)
+      redirect '/info'
+  else
+      redirect '/'
+  end
 
 end
 
@@ -38,7 +53,6 @@ get '/info' do
 umsg = params[:umsg] || ""
 dmsg = params[:dmsg] || ""
 erb :root
-
 
 end
 
