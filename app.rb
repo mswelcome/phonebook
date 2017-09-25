@@ -1,25 +1,31 @@
-#PhoneBook App
+  #PhoneBook App
 
 require 'aws-sdk'
 require 'sinatra'
 require 'pg'
-#require 'bcrypt'
+require 'bcrypt'
 require_relative 'functions.rb'
 load './local_env.rb' if File.exist?('./local_env.rb')
 enable 'sessions'
 
 get '/' do
 
-  #lmsg = params[:lmsg] || ""
-  #createlogintable()
-  erb :login
+  msg = params[:lmsg] || ""
+  createlogintable()
+  insertlogin()
+  erb :login, locals:{msg: msg}
+
 end
 
 post '/p_login' do
 
+  #createlogintable()
+  #insertlogin()
+
   lmsg = "Login Unsucessful"
   un = params[:un]
   pw = params[:pw]
+
 
 
   wbinfo = {
@@ -35,7 +41,7 @@ post '/p_login' do
 
   wb = PG::Connection.new(wbinfo)
 
-  compareuser = wb.exec("SELECT * FROM login WHERE user ='#{un}'")
+  compareuser = wb.exec("SELECT * FROM login WHERE username ='#{un}'")
 
   blah = compareuser.values.flatten
   puts "#{blah}"
@@ -43,16 +49,16 @@ post '/p_login' do
   if blah.include?(pw)
       redirect '/info'
   else
-      redirect '/'
+      redirect '/?msg=Login Unsucessful!!!'
   end
 
 end
 
 get '/info' do
 
-umsg = params[:umsg] || ""
-dmsg = params[:dmsg] || ""
-erb :root
+msg = params[:msg] || ""
+#dmsg = params[:dmsg] || ""
+erb :root, locals: {msg: msg}
 
 end
 
@@ -60,7 +66,7 @@ post '/records' do
 
     data = params[:data]
 
-    createpb
+    createpb()
     addtopb(data)
 
  redirect '/get'
@@ -141,8 +147,8 @@ post '/p_change' do
   zip = params[:zip]
   phone = params[:phone]
   radio = params[:radio]
-  umsg = "Succesful update"
-  dmsg = "Succesful deletion"
+  #umsg = "Succesful update"
+  #dmsg = "Succesful deletion"
 
   wbinfo = {
 
@@ -158,11 +164,11 @@ post '/p_change' do
 
   if radio == 'update'
     wb.exec("UPDATE public.pb SET first='#{first}', last='#{last}', street='#{street}', city='#{city}', state='#{state}', zip='#{zip}', phone='#{phone}' WHERE id = '1'")
-    redirect '/?umsg=' + umsg
+    redirect '/info?msg=Succesful update!'
   elsif radio == 'delete'
     wb.exec("DELETE FROM  public.pb WHERE id = '#{qwerty}'")
-    redirect '/?dmsg=' + dmsg
+    redirect '/info?msg=Succesful deletion!'
   else radio == 'cancel'
-    redirect '/'
+    redirect '/info'
   end
 end
