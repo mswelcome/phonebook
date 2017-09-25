@@ -7,8 +7,34 @@ require_relative 'functions.rb'
 load './local_env.rb' if File.exist?('./local_env.rb')
 enable 'sessions'
 
-
 get '/' do
+  createlogintable()
+  erb :login
+end
+
+post '/p_login' do
+
+  wbinfo = {
+
+    host: ENV['RDS_HOST'],
+    port: ENV['RDS_PORT'],
+    dbname: ENV['RDS_DB_NAME'],
+    user: ENV['RDS_USERNAME'],
+    password: ENV['RDS_PASSWORD']
+
+  }
+
+
+  wb = PG::Connection.new(wbinfo)
+
+  compareuser = wb.exec()
+
+
+
+end
+
+get '/info' do
+
 umsg = params[:umsg] || ""
 dmsg = params[:dmsg] || ""
 erb :root
@@ -62,13 +88,16 @@ begin
 end
 
 post '/update' do
+
   qwerty = params[:qwerty]
 
 
   redirect '/options?qwerty=' + qwerty
+
 end
 
 get '/options' do
+
   qwerty = params[:qwerty]
 
   wbinfo = {

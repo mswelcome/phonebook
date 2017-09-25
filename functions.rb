@@ -61,3 +61,36 @@ def createpb()
 
 
 end
+
+def createlogintable()
+
+  begin
+
+    wbinfo = {
+
+      host: ENV['RDS_HOST'],
+      port: ENV['RDS_PORT'],
+      dbname: ENV['RDS_DB_NAME'],
+      user: ENV['RDS_USERNAME'],
+      password: ENV['RDS_PASSWORD']
+
+    }
+
+
+    wb = PG::Connection.new(wbinfo)
+
+     wb.exec ("CREATE TABLE public.login(
+                id serial NOT NULL,
+                user varchar(50),
+                pass varchar(50))");
+
+    rescue PG::Error => e
+
+      puts e.message
+
+    ensure
+
+      wb.close if wb
+
+    end
+end
